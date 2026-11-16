@@ -1,0 +1,32 @@
+
+name: Rose iOS Build
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  build-ios:
+    runs-on: macos-15
+    timeout-minutes: 40
+    steps:
+      - name: Checkout Rose iOS source
+        uses: actions/checkout@v4
+
+      - name: Show Xcode version
+        run: xcodebuild -version
+
+      - name: Build unsigned iOS IPA
+        run: bash scripts/build-ipa.sh Release
+
+      - name: Upload unsigned IPA
+        uses: actions/upload-artifact@v4
+        with:
+          name: Rose-iOS-unsigned-IPA
+          path: build/Rose.ipa
+          if-no-files-found: error
+          retention-days: 14
